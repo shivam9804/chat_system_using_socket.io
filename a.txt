@@ -1,0 +1,10 @@
+var userContact = username;
+
+     contactLength = contact.length;
+        if(contactLength == 0){
+            //console.log("from if",contactLength);
+            connection.query("SELECT DISTINCT receiver FROM chat WHERE sender = '"+ request.body.username +"'", function(error, contact){
+        
+        result.send(JSON.stringify(contact));
+    });
+  }
