@@ -23,8 +23,8 @@ var mysql = require("mysql");
 var connection = mysql.createConnection({
     "host" : "localhost",
     "user" : "root",
-    "password" : "",
-    "database" : ""
+    "password" : "1234",
+    "database" : "b2b_updated_with_admin"
 })
 
 // connect
@@ -106,12 +106,24 @@ io.on("connection", function(socket){
     // listen from client for new user
     socket.on("message_new_user", function(data){
         // console.log("sender: "+ data.sender +" receiver: "+ data.receiver +" message: "+data.message);
-        // storing message in database for user to fetch when he logs in 
-        connection.query("INSERT INTO chat (sender, receiver, message) VALUES ('"+ data.sender +"','"+ data.receiver +"','"+ data.message +"')", function(error, result){
 
-        });
+        if(!users[data.receiver]){
+            connection.query("INSERT INTO chat (sender, receiver, message) VALUES ('"+ data.sender +"','"+ data.receiver +"','"+ data.message +"')", function(error, result){
+            });
+        }else{
+            // get the scoket id of receiver
+            var socketId = users[data.receiver];
+            
+            // send message to receiver 
+            io.to(socketId).emit("new_message", data);
+
+
+            // storing message in database for user to fetch when he logs in 
+            connection.query("INSERT INTO chat (sender, receiver, message) VALUES ('"+ data.sender +"','"+ data.receiver +"','"+ data.message +"')", function(error, result){
+            });
+        }
+       
     });
-
 });
 
 //  starting the server
